@@ -11,7 +11,6 @@ fs.mkdir(destination, { recursive: true }, (err) => {
       return console.error(err);
     }
   });
- 
 
   fs.readdir(source, {withFileTypes: true}, (err, files) => {
       if (err) {
