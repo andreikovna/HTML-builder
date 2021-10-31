@@ -21,7 +21,7 @@ fs.readdir(sourse, {withFileTypes: true}, (err, files) => {
                         (err, data) => {
                             if (err) throw err;
                             const mergedStyles = [];
-                            const style = data.toString()
+                            const style = data.toString();
                             mergedStyles.push(style);
 
                             for (let i=0; i<mergedStyles.length; i++){
