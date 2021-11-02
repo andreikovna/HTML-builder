@@ -4,17 +4,17 @@ const fsPromises = require("fs").promises;
 
 fs.mkdir(path.join(__dirname, "project-dist"), { recursive: true }, (err) => {
   if (err) throw err;
-})
+});
 
 const template = fs.createReadStream(
   path.join(__dirname, "template.html"),
   "utf-8"
 );
 const indexHtml = fs.createWriteStream(
-    path.join(__dirname, "project-dist", "index.html")
-  );
+  path.join(__dirname, "project-dist", "index.html")
+);
 
-template.on('data', async (data) => {
+template.on("data", async (data) => {
   const htmlResult = await htmlBuild();
   indexHtml.write(htmlResult);
 
@@ -23,22 +23,23 @@ template.on('data', async (data) => {
     const regularTags = html.match(/{{(.*)}}/gi);
 
     for (let item of regularTags) {
-      const tagFile =item.match(/\w+/);
+      const tagFile = item.match(/\w+/);
       const tagNameFile = tagFile[0];
 
-      const component = await fsPromises.readFile(path.join(__dirname, 'components', `${tagNameFile}.html`));
+      const component = await fsPromises.readFile(
+        path.join(__dirname, "components", `${tagNameFile}.html`)
+      );
       html = html.replace(item, component.toString());
-    };
-    return html; 
-  } 
-})
-
+    }
+    return html;
+  }
+});
 
 const resultStyles = path.join(__dirname, "project-dist", "style.css");
-const sourseStyles = path.join(__dirname, "styles");
+const sourceStyles = path.join(__dirname, "styles");
 const outputStyles = fs.createWriteStream(resultStyles);
 
-fs.readdir(sourseStyles, { withFileTypes: true }, (err, files) => {
+fs.readdir(sourceStyles, { withFileTypes: true }, (err, files) => {
   if (err) {
     console.log(err);
   } else {
@@ -67,12 +68,48 @@ fs.readdir(sourseStyles, { withFileTypes: true }, (err, files) => {
   }
 });
 
-// fs.mkdir(
-//   path.join(__dirname, "project-dist", "assets"),
-//   { recursive: true },
-//   (err) => {
-//     if (err) {
-//       throw err;
-//     }
-//   }
-// );
+const destinationAssets = path.join(__dirname, "project-dist", "assets");
+const sourceAssets = path.join(__dirname, "assets");
+
+fs.access(destinationAssets, function (error) {
+  if (error) {
+    copyAssets();
+  } else {
+    deleteAndCopyAssets();
+  }
+});
+
+function copyAssets() {
+  fs.promises.mkdir(destinationAssets);
+  copyFiles(sourceAssets, destinationAssets);
+}
+
+async function deleteAndCopyAssets() {
+  await fs.promises.rmdir(destinationAssets, { recursive: true });
+  await fs.promises.mkdir(destinationAssets, { recursive: true });
+  copyFiles(sourceAssets, destinationAssets);
+}
+
+function copyFiles(source, destination) {
+  fs.readdir(source, { withFileTypes: true }, (err, files) => {
+    if (err) {
+      console.log(err);
+    } else {
+      files.forEach((file) => {
+        const fileName = file.name.toString();
+        const sourcePath = path.join(source, fileName);
+        const destinationPath = path.join(destination, fileName);
+        if (file.isDirectory()) {
+          fsPromises.mkdir(destinationPath, { recursive: true });
+          copyFiles(sourcePath, destinationPath);
+        } else if (file.isFile()) {
+          fsPromises
+            .copyFile(sourcePath, destinationPath)
+            .catch(function (error) {
+              console.log(error);
+            });
+        }
+      });
+    }
+  });
+}
