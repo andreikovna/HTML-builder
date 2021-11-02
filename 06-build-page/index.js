@@ -80,13 +80,13 @@ fs.access(destinationAssets, function (error) {
 });
 
 function copyAssets() {
-  fs.promises.mkdir(destinationAssets);
+  fsPromises.mkdir(destinationAssets);
   copyFiles(sourceAssets, destinationAssets);
 }
 
 async function deleteAndCopyAssets() {
-  await fs.promises.rmdir(destinationAssets, { recursive: true });
-  await fs.promises.mkdir(destinationAssets, { recursive: true });
+  await fsPromises.rmdir(destinationAssets, { recursive: true });
+  await fsPromises.mkdir(destinationAssets, { recursive: true });
   copyFiles(sourceAssets, destinationAssets);
 }
 
