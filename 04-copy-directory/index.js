@@ -14,7 +14,7 @@ fs.access(destination, function(error){
 })
 
 async function deleteAndCopy(){
-    await fs.promises.rmdir(destination, { recursive: true }, (err) => {
+    await fsPromises.rmdir(destination, { recursive: true }, (err) => {
         if (err) {
             return console.error(err);
           }
