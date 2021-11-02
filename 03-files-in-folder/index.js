@@ -18,8 +18,8 @@ fs.readdir(folder, { withFileTypes: true }, (err, files) => {
           if (error) {
             console.log(error);
           } else {
-            const fileSize = stats.size * 0.001;
-            console.log(`${fileName} - ${extName} - ${fileSize}kb`);
+            const fileSize = stats.size;
+            console.log(`${fileName} - ${extName} - ${fileSize} b`);
           }
         });
       }
