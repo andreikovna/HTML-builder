@@ -23,8 +23,7 @@ template.on("data", async (data) => {
     const regularTags = html.match(/{{(.*)}}/gi);
 
     for (let item of regularTags) {
-      const tagFile = item.match(/\w+/);
-      const tagNameFile = tagFile[0];
+      const tagNameFile = item.substr(2, (item.length-4));
 
       const component = await fsPromises.readFile(
         path.join(__dirname, "components", `${tagNameFile}.html`)
