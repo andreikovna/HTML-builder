@@ -20,7 +20,7 @@ template.on("data", async (data) => {
 
   async function htmlBuild() {
     let html = data.toString();
-    const regularTags = html.match(/{{(.*)}}/gi);
+    const regularTags = html.match(/{{[a-zA-Z]*}}/gi);
 
     for (let item of regularTags) {
       const tagNameFile = item.substr(2, (item.length-4));
